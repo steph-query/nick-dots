@@ -1,9 +1,17 @@
 set encoding=utf8
 call plug#begin('~/.local/share/nvim/plugged')
 " Fuzzy file finder
+Plug 'tpope/vim-jdaddy'
+" pretty json
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+"Async runner for bash
+Plug 'skywind3000/asyncrun.vim'
 " Ale, an async linter for vim
 Plug 'w0rp/ale'
+"lightline status bar
+Plug 'itchyny/lightline.vim'
+"Plugin to integrate Ale and lightline
+Plug 'maximbaz/lightline-ale'
 " Super Tab allows for tab completion in insert mode
 Plug 'ervandew/supertab'
 " Auto Commenter
@@ -35,28 +43,29 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'mileszs/ack.vim'
 "Silver Searcher
 Plug 'numkil/ag.nvim'
-"lightline status bar
-Plug 'itchyny/lightline.vim'
-"markdown preview
-Plug 'euclio/vim-markdown-composer'
 "change surrounding characters
 Plug 'tpope/vim-surround'
 "allow '.' key to repeat plugin commands
 Plug 'tpope/vim-repeat'
-"code snippets for reactjs
-Plug 'justinj/vim-react-snippets'
 "delete buffers without closing windows
 Plug 'qpkorr/vim-bufkill'
 "peaksea color scheme
 Plug 'vim-scripts/peaksea'
+"Plug 'marciomazza/vim-brogrammer-theme'
 "auto docstring generator for python
 Plug 'heavenshell/vim-pydocstring'
-"fixes indentation in yaml files
-Plug 'pearofducks/ansible-vim'
+"JSON highlighting and pretty printing
+Plug 'tpope/vim-jdaddy'
+"ReasonML syntax
+Plug 'reasonml-editor/vim-reason-plus'
+"Language Client for reasonml
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+"edit wikies from vim"
+Plug 'aquach/vim-mediawiki-editor'
 call plug#end()
-
-"yaml intentation config
-let g:ansible_unindent_after_newline = 1
 
 "python docstring shortcut
 let g:pydocstring_enable_mapping = 0
@@ -65,17 +74,17 @@ nmap <C-i> :Pydocstring<CR>
 " re-map leader key to ';'
 let mapleader=";"
 
+
 set termguicolors
 if ! has("gui_running")
   set t_Co=256
 endif
 set background=dark
 colors peaksea
+"colors brogrammer
 filetype on             " vim will try to detect the file type
 filetype plugin on      " if i'm using a plugin for this filetype it will get loaded
-set tabstop=2           " show tabs with two spaces
-set shiftwidth=2        " when indenting with '>' use two spaces width
-set expandtab           " on pressing tab insert 2 spaces
+
 set number              " show line numbers
 set showcmd             " show command in bottom bar
 set cursorline          " highlight current line
@@ -84,6 +93,12 @@ set showmatch           " highlight matching [{()}]
 set incsearch           " search as characters are entered
 set hlsearch            " highlight matche
 set hidden              " let vim leave unwritten buffers
+
+let g:mediawiki_editor_url = 'wiki.minted.com'
+let g:mediawiki_editor_path = '/'
+let g:mediawiki_editor_username = 'nick.james'
+let g:mediawiki_editor_password = 'FfUR6ZcpQasJZAU5rhv3'
+
 
 "" GitGutter
 let g:gitgutter_sign_added = '∙'
@@ -126,7 +141,6 @@ noremap! <Left> <Esc>
 noremap  <Right> ""
 noremap! <Right> <Esc>
 
-
 "ctrl modifier to move through splits
 noremap <C-J> <C-W><C-J>
 noremap <C-K> <C-W><C-K>
@@ -143,9 +157,11 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 " bind K to grep word under cursor
 nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
-
 " Bind \ to do our Ag:
 nnoremap \ :Ag<SPACE>
+
+let g:python_host_prog = '/Users/nickjames/.pyenv/versions/neovim2/bin/python'
+let g:python3_host_prog = '/Users/nickjames/.pyenv/versions/neovim3/bin/python'
 
 " JSX highlighting in JS files
 let g:jsx_ext_required = 0
@@ -158,6 +174,70 @@ let g:deoplete#sources#ternjs#filetypes = [
                 \ 'jsx',
                 \ 'javascript.jsx',
                 \ ]
+
+" Set this. Airline will handle the rest.
+let g:ale_sign_error = '●' " Less aggressive than the default '>>'
+let g:ale_sign_warning = '.'
+let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
+let g:ale_linters = {'javascript': ['eslint']}
+let g:ale_fixers = {
+      \   'javascript': ['prettier-eslint'],
+      \ }
+let g:ale_javascript_eslint_executable = 'eslint_d'
+let g:ale_javascript_eslint_use_global = 0
+let g:ale_javascript_prettier_eslint_executable = 'node_modules/.bin/prettier-eslint'
+let g:ale_javascript_prettier_eslint_use_global = 0
+let g:ale_fix_on_save = 1
+
+"Status line settings
+
+let g:lightline = {
+  \   'colorscheme': 'Dracula',
+  \   'active': {
+  \     'left':[ [ 'mode', 'paste' ],
+  \              [ 'gitbranch', 'readonly', 'filename', 'modified' ]
+  \     ]
+  \   },
+	\   'component': {
+	\     'lineinfo': ' %3l:%-2v',
+	\   },
+  \   'component_function': {
+  \     'gitbranch': 'fugitive#head',
+  \   }
+  \ }
+let g:lightline.separator = {
+	\   'left': '', 'right': ''
+  \}
+let g:lightline.subseparator = {
+	\   'left': '', 'right': '' 
+  \}
+let g:lightline.component_expand = {
+      \  'linter_checking': 'lightline#ale#checking',
+      \  'linter_warnings': 'lightline#ale#warnings',
+      \  'linter_errors': 'lightline#ale#errors',
+      \  'linter_ok': 'lightline#ale#ok',
+      \ }
+let g:lightline.component_type = {
+      \     'linter_checking': 'left',
+      \     'linter_warnings': 'warning',
+      \     'linter_errors': 'error',
+      \     'linter_ok': 'left',
+      \ }
+let g:lightline#ale#indicator_checking = "\uf110"
+let g:lightline#ale#indicator_warnings = "\uf071"
+let g:lightline#ale#indicator_errors = "\uf05e"
+let g:lightline#ale#indicator_ok = "\uf00c"
+let g:lightline.active = { 'right': [[ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ]] }
+
+" Triger `autoread` when files changes on disk
+" https://unix.stackexchange.com/questions/149209/refresh-changed-content-of-file-opened-in-vim/383044#383044
+" https://vi.stackexchange.com/questions/13692/prevent-focusgained-autocmd-running-in-command-line-editing-mode
+autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+" Notification after file change
+" https://vi.stackexchange.com/questions/13091/autocmd-event-for-autoread
+autocmd FileChangedShellPost *
+  \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
+
 "remap emmet-vim Cntrl y to contrl e
 let g:user_emmet_expandabbr_key='<C-E>'
 let g:user_emmet_settings = {
@@ -168,7 +248,7 @@ let g:user_emmet_settings = {
 \}
 
 " Auto open nerdtree and set some configurations
-autocmd vimenter * NERDTree
+"autocmd vimenter * NERDTree
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeIgnore = ['\.pyc$']
@@ -185,60 +265,46 @@ func! Multiple_cursors_after()
     call deoplete#init#_enable()
 endfunc
 
-" Lightline
-let g:lightline = {
-\ 'colorscheme': 'wombat',
-\ 'active': {
-\   'left': [['mode', 'paste'], ['filename', 'modified']],
-\   'right': [['lineinfo'], ['percent'], ['readonly', 'linter_warnings', 'linter_errors', 'linter_ok']]
-\ },
-\ 'component_expand': {
-\   'linter_warnings': 'LightlineLinterWarnings',
-\   'linter_errors': 'LightlineLinterErrors',
-\   'linter_ok': 'LightlineLinterOK'
-\ },
-\ 'component_type': {
-\   'readonly': 'error',
-\   'linter_warnings': 'warning',
-\   'linter_errors': 'error'
-\ },
-\ }
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+autocmd BufWritePre *.py,*.js,*.sql,*.yml,*.yaml,*.html,*.css :call <SID>StripTrailingWhitespaces()
 
-function! LightlineLinterWarnings() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '' : printf('%d ◆', all_non_errors)
+nnoremap gp `[v`]
+
+set shiftwidth=2 tabstop=2 softtabstop=2  expandtab
+" Set tabstop, softtabstop and shiftwidth to the same value
+command! -nargs=* Stab call Stab()
+function! Stab()
+  let l:tabstop = 1 * input('set tabstop = softtabstop = shiftwidth = ')
+  if l:tabstop > 0
+    let &l:sts = l:tabstop
+    let &l:ts = l:tabstop
+    let &l:sw = l:tabstop
+  endif
+  call SummarizeTabs()
 endfunction
 
-function! LightlineLinterErrors() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '' : printf('%d ✗', all_errors)
+function! SummarizeTabs()
+  try
+    echohl ModeMsg
+    echon 'tabstop='.&l:ts
+    echon ' shiftwidth='.&l:sw
+    echon ' softtabstop='.&l:sts
+    if &l:et
+      echon ' expandtab'
+    else
+      echon ' noexpandtab'
+    endif
+  finally
+    echohl None
+  endtry
 endfunction
-
-function! LightlineLinterOK() abort
-  let l:counts = ale#statusline#Count(bufnr(''))
-  let l:all_errors = l:counts.error + l:counts.style_error
-  let l:all_non_errors = l:counts.total - l:all_errors
-  return l:counts.total == 0 ? '✓ ' : ''
-endfunction
-
-autocmd User ALELint call s:MaybeUpdateLightline()
-
-" Update and show lightline but only if it's visible (e.g., not in Goyo)
-function! s:MaybeUpdateLightline()
-  if exists('#lightline')
-    call lightline#update()
-  end
-endfunction
-
-" Trim Whitespaces
-function! TrimWhitespace()
-  let l:save = winsaveview()
-  %s/\\\@<!\s\+$//e
-  call winrestview(l:save)
-endfunction
-autocmd FileType * autocmd BufWritePre <buffer> :call TrimWhitespace()
-
