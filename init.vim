@@ -160,8 +160,7 @@ nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 " Bind \ to do our Ag:
 nnoremap \ :Ag<SPACE>
 
-let g:python_host_prog = '/Users/nickjames/.pyenv/versions/neovim2/bin/python'
-let g:python3_host_prog = '/Users/nickjames/.pyenv/versions/neovim3/bin/python'
+let g:python3_host_prog = '/Users/nick/.virtualenvs/neovim/bin/python'
 
 " JSX highlighting in JS files
 let g:jsx_ext_required = 0
