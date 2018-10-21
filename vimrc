@@ -70,7 +70,7 @@ let mapleader=";"
 "set complete-=t
 "set complete-=i
 
-set termguicolors
+set notermguicolors
 if ! has("gui_running")
   set t_Co=256
 endif
@@ -275,4 +275,3 @@ function! SummarizeTabs()
     echohl None
   endtry
 endfunction
-
