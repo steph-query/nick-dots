@@ -26,6 +26,8 @@ Plug 'tpope/vim-eunuch'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'ryanoasis/vim-devicons'
+"Graphql plugin
+Plug 'jparise/vim-graphql'
 "Firewatch color scheme
 Plug 'rakr/vim-two-firewatch'
 "Snippets
@@ -55,7 +57,20 @@ Plug 'heavenshell/vim-pydocstring'
 Plug 'tpope/vim-jdaddy'
 "For killing buffers without losing window
 Plug 'qpkorr/vim-bufkill'
+"emoji plugin
+Plug 'junegunn/vim-emoji'
 call plug#end()
+
+let g:gitgutter_sign_added = emoji#for('small_blue_diamond')
+let g:gitgutter_sign_modified = emoji#for('small_orange_diamond')
+let g:gitgutter_sign_removed = emoji#for('small_red_triangle')
+let g:gitgutter_sign_modified_removed = emoji#for('collision')
+
+"" GitGutter
+"let g:gitgutter_sign_added = '∙'
+"let g:gitgutter_sign_modified = '∙'
+"let g:gitgutter_sign_removed = '∙'
+"let g:gitgutter_sign_modified_removed = '∙'
 
 let g:UltiSnipsExpandTrigger="<C-b>"
 
@@ -88,12 +103,6 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight match
 "Make menus contrast
 :highlight Pmenu ctermbg=gray guibg=gray
-
-"" GitGutter
-let g:gitgutter_sign_added = '∙'
-let g:gitgutter_sign_modified = '∙'
-let g:gitgutter_sign_removed = '∙'
-let g:gitgutter_sign_modified_removed = '∙'
 
 " Fuzzy file finder to behave like cntrl-P
 nnoremap <c-p> :FZF<cr>
@@ -275,3 +284,11 @@ function! SummarizeTabs()
     echohl None
   endtry
 endfunction
+
+"Easily move lines
+nnoremap <S-j> :m .+1<CR>==
+nnoremap <S-k> :m .-2<CR>==
+vnoremap <S-j> :m '>+1<CR>gv=gv
+vnoremap <S-k> :m '<-2<CR>gv=gv
+"inoremap <S-j> <Esc>:m .+1<CR>==gi
+"inoremap <S-k> <Esc>:m .-2<CR>==gi
