@@ -89,6 +89,11 @@ set hlsearch            " highlight match
 "Make menus contrast
 :highlight Pmenu ctermbg=gray guibg=gray
 
+"Performance
+let term = "screen"
+set nocursorline
+set nolazyredraw
+
 "" GitGutter
 let g:gitgutter_sign_added = '∙'
 let g:gitgutter_sign_modified = '∙'
@@ -224,6 +229,10 @@ let g:user_emmet_settings = {
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeIgnore = ['\.pyc$']
+
+" Backspace behave properly
+set backspace=indent,eol,start
+
 nmap <C-o> :NERDTreeToggle<CR>
 
 "use j+j to exit insert mode
