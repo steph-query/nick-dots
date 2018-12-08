@@ -66,11 +66,6 @@ let g:gitgutter_sign_modified = emoji#for('small_orange_diamond')
 let g:gitgutter_sign_removed = emoji#for('small_red_triangle')
 let g:gitgutter_sign_modified_removed = emoji#for('collision')
 
-"" GitGutter
-"let g:gitgutter_sign_added = '∙'
-"let g:gitgutter_sign_modified = '∙'
-"let g:gitgutter_sign_removed = '∙'
-"let g:gitgutter_sign_modified_removed = '∙'
 
 let g:UltiSnipsExpandTrigger="<C-b>"
 
@@ -103,6 +98,15 @@ set incsearch           " search as characters are entered
 set hlsearch            " highlight match
 "Make menus contrast
 :highlight Pmenu ctermbg=gray guibg=gray
+
+"Performance
+let term = "screen"
+
+"" GitGutter
+let g:gitgutter_sign_added = '∙'
+let g:gitgutter_sign_modified = '∙'
+let g:gitgutter_sign_removed = '∙'
+let g:gitgutter_sign_modified_removed = '∙'
 
 " Fuzzy file finder to behave like cntrl-P
 nnoremap <c-p> :FZF<cr>
@@ -233,6 +237,10 @@ let g:user_emmet_settings = {
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeIgnore = ['\.pyc$']
+
+" Backspace behave properly
+set backspace=indent,eol,start
+
 nmap <C-o> :NERDTreeToggle<CR>
 
 "use j+j to exit insert mode
