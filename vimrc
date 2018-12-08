@@ -91,8 +91,6 @@ set hlsearch            " highlight match
 
 "Performance
 let term = "screen"
-set nocursorline
-set nolazyredraw
 
 "" GitGutter
 let g:gitgutter_sign_added = '∙'
