@@ -213,6 +213,12 @@ autocmd FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | checkti
 autocmd FileChangedShellPost *
   \ echohl WarningMsg | echo "File changed on disk. Buffer reloaded." | echohl None
 
+let g:python_recommended_style=0
+set shiftwidth=2 
+set tabstop=2 
+set softtabstop=2  
+set expandtab
+
 "remap emmet-vim Cntrl y to contrl e
 let g:user_emmet_expandabbr_key='<C-E>'
 let g:user_emmet_settings = {
@@ -226,7 +232,7 @@ let g:user_emmet_settings = {
 "autocmd vimenter * NERDTree
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
-let NERDTreeIgnore = ['\.pyc$']
+let NERDTreeIgnore = ['\.pyc$', '\.swp$']
 
 " Backspace behave properly
 set backspace=indent,eol,start
@@ -254,7 +260,6 @@ nnoremap gp `[v`]
 "set 'm' and ',' as repeat motion keys
 nnoremap m ,
 nnoremap , ;
-set shiftwidth=2 tabstop=2 softtabstop=2  expandtab
 " Set tabstop, softtabstop and shiftwidth to the same value
 command! -nargs=* Stab call Stab()
 function! Stab()
