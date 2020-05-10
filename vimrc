@@ -32,7 +32,10 @@ Plug 'jparise/vim-graphql'
 Plug 'rakr/vim-two-firewatch'
 "Snippets
 Plug 'SirVer/ultisnips'
-Plug 'justinj/vim-react-snippets'
+" ES2015 code snippets (Optional)
+Plug 'epilande/vim-es2015-snippets'
+" React code snippets
+Plug 'epilande/vim-react-snippets'
 "Versatile syntax plugin
 Plug 'sheerun/vim-polyglot'
 " Emmet for vim
@@ -59,6 +62,10 @@ Plug 'tpope/vim-jdaddy'
 Plug 'qpkorr/vim-bufkill'
 "emoji plugin
 Plug 'junegunn/vim-emoji'
+"typescript plugin
+Plug 'leafgarland/typescript-vim'
+"tsx highlighting
+Plug 'ianks/vim-tsx'
 call plug#end()
 
 let g:gitgutter_sign_added = emoji#for('small_blue_diamond')
@@ -67,8 +74,8 @@ let g:gitgutter_sign_removed = emoji#for('small_red_triangle')
 let g:gitgutter_sign_modified_removed = emoji#for('collision')
 
 
-let g:UltiSnipsExpandTrigger="<C-b>"
-
+" Trigger configuration (Optional)
+let g:UltiSnipsExpandTrigger="<C-l>"
 "python docstring shortcut
 let g:pydocstring_enable_mapping = 0
 nmap <C-i> :Pydocstring<CR>
@@ -298,5 +305,9 @@ nnoremap <S-j> :m .+1<CR>==
 nnoremap <S-k> :m .-2<CR>==
 vnoremap <S-j> :m '>+1<CR>gv=gv
 vnoremap <S-k> :m '<-2<CR>gv=gv
-"inoremap <S-j> <Esc>:m .+1<CR>==gi
-"inoremap <S-k> <Esc>:m .-2<CR>==gi
+
+"-- FOLDING --
+set foldmethod=syntax "syntax highlighting items specify folds
+"set foldcolumn=1 "defines 1 col at window left, to indicate folding
+let javaScript_fold=1 "activate folding by JS syntax
+set foldlevelstart=99 "start file with all folds opened

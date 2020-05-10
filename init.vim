@@ -1,5 +1,5 @@
 set encoding=utf8
-call plug#begin('~/.local/share/nvim/plugged')
+call plug#begin('~/.vim/plugged/')
 " Fuzzy file finder
 Plug 'tpope/vim-jdaddy'
 " pretty json
@@ -14,6 +14,8 @@ Plug 'itchyny/lightline.vim'
 Plug 'maximbaz/lightline-ale'
 " Super Tab allows for tab completion in insert mode
 Plug 'ervandew/supertab'
+"Auto close brackets
+Plug 'rstacruz/vim-closer'
 " Auto Commenter
 Plug 'scrooloose/nerdcommenter'
 " Nerd Tree, a file manager for vim
@@ -24,15 +26,23 @@ Plug 'tpope/vim-eunuch'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'ryanoasis/vim-devicons'
-Plug 'rakr/vim-two-firewatch'
+"Graphql plugin
+Plug 'jparise/vim-graphql'
+
+"Color schemes
+"Plug 'rakr/vim-two-firewatch'
+Plug 'dracula/vim', { 'as': 'dracula' }
+"Plug 'flrnprz/plastic.vim', { 'as': 'plastic' }
+Plug 'morhetz/gruvbox'
+
+"Snippets
+Plug 'SirVer/ultisnips'
+" ES2015 code snippets (Optional)
+Plug 'epilande/vim-es2015-snippets'
+" React code snippets
+Plug 'epilande/vim-react-snippets'
 "Versatile syntax plugin
 Plug 'sheerun/vim-polyglot'
-" deoplete, an async completion engine.
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" Python Completion for deoplete
-Plug 'zchee/deoplete-jedi'
-"JavaScript completion with tern
-Plug 'carlitux/deoplete-ternjs', { 'do': 'npm install -g tern' }
 " Emmet for vim
 Plug 'mattn/emmet-vim'
 "git tools
@@ -41,47 +51,65 @@ Plug 'airblade/vim-gitgutter'
 Plug 'terryma/vim-multiple-cursors'
 "For grep
 Plug 'mileszs/ack.vim'
+"Autocomplete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+"Plug 'maxboisvert/vim-simple-complete'
 "Silver Searcher
 Plug 'numkil/ag.nvim'
+"Vim grep
+Plug 'dkprice/vim-easygrep'
 "change surrounding characters
 Plug 'tpope/vim-surround'
 "allow '.' key to repeat plugin commands
 Plug 'tpope/vim-repeat'
-"delete buffers without closing windows
-Plug 'qpkorr/vim-bufkill'
-"peaksea color scheme
-Plug 'vim-scripts/peaksea'
-"Plug 'marciomazza/vim-brogrammer-theme'
 "auto docstring generator for python
 Plug 'heavenshell/vim-pydocstring'
 "JSON highlighting and pretty printing
 Plug 'tpope/vim-jdaddy'
-"ReasonML syntax
-Plug 'reasonml-editor/vim-reason-plus'
-"Language Client for reasonml
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-"edit wikies from vim"
-Plug 'aquach/vim-mediawiki-editor'
+"For killing buffers without losing window
+Plug 'qpkorr/vim-bufkill'
+"emoji plugin
+Plug 'junegunn/vim-emoji'
+"typescript plugin
+Plug 'leafgarland/typescript-vim'
+Plug 'Quramy/tsuquyomi'
+
+
+"tsx highlighting
+Plug 'ianks/vim-tsx'
 call plug#end()
 
+let g:python_host_prog = '/Users/nick/.pyenv/versions/nvim2/bin/python'
+let g:python3_host_prog = '/Users/nick/.pyenv/versions/nvim3/bin/python3'
+
+let g:gitgutter_sign_added = emoji#for('small_blue_diamond')
+let g:gitgutter_sign_modified = emoji#for('small_orange_diamond')
+let g:gitgutter_sign_removed = emoji#for('small_red_triangle')
+let g:gitgutter_sign_modified_removed = emoji#for('collision')
+
+
+" Trigger configuration (Optional)
+let g:UltiSnipsExpandTrigger="<C-l>"
 "python docstring shortcut
 let g:pydocstring_enable_mapping = 0
 nmap <C-i> :Pydocstring<CR>
 
-" re-map leader key to ';'
+" re-map leader key to ';' 
 let mapleader=";"
 
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
 
 set termguicolors
 if ! has("gui_running")
   set t_Co=256
 endif
-set background=dark
-colors peaksea
-"colors brogrammer
+
+set background=light
+
+"Colors
+"colors gruvbox
+colors dracula
 filetype on             " vim will try to detect the file type
 filetype plugin on      " if i'm using a plugin for this filetype it will get loaded
 
@@ -91,14 +119,12 @@ set cursorline          " highlight current line
 set wildmenu            " visual autocomplete for command menu
 set showmatch           " highlight matching [{()}]
 set incsearch           " search as characters are entered
-set hlsearch            " highlight matche
-set hidden              " let vim leave unwritten buffers
+set hlsearch            " highlight match
+"Make menus contrast
+:highlight Pmenu ctermbg=gray guibg=gray
 
-let g:mediawiki_editor_url = 'wiki.minted.com'
-let g:mediawiki_editor_path = '/'
-let g:mediawiki_editor_username = 'nick.james'
-let g:mediawiki_editor_password = 'FfUR6ZcpQasJZAU5rhv3'
-
+"Performance
+let term = "screen"
 
 "" GitGutter
 let g:gitgutter_sign_added = '∙'
@@ -117,7 +143,7 @@ set rtp+=/usr/local/opt/fzf
 set rtp+=~/.fzf
 
 "Buffer controls
-nmap ; :buffers<CR>
+"nmap ; :buffers<CR>
 nmap <C-d> :BD<cr>
 nmap <C-c> :BD!<cr>
 nnoremap <C-a> :bp<CR>
@@ -152,35 +178,21 @@ if executable('ag')
   " Use ag over grep
   set grepprg=ag\ --nogroup\ --nocolor
 endif
-let g:ackprg = 'ag --nogroup --nocolor --column'
-
-" bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
 
 " Bind \ to do our Ag:
 nnoremap \ :Ag<SPACE>
 
-let g:python3_host_prog = '/Users/nick/.virtualenvs/neovim/bin/python'
-
 " JSX highlighting in JS files
 let g:jsx_ext_required = 0
-
-" enable deoplete on startup
-let g:deoplete#enable_at_startup = 1
-
-"Add extra filetypes
-let g:deoplete#sources#ternjs#filetypes = [
-                \ 'jsx',
-                \ 'javascript.jsx',
-                \ ]
 
 " Set this. Airline will handle the rest.
 let g:ale_sign_error = '●' " Less aggressive than the default '>>'
 let g:ale_sign_warning = '.'
 let g:ale_lint_on_enter = 0 " Less distracting when opening a new file
 let g:ale_linters = {'javascript': ['eslint']}
-let g:ale_fixers = {
+let g:ale_fixers = { 
       \   'javascript': ['prettier'],
+      \   'typescript': ['prettier']
       \ }
 let g:ale_javascript_eslint_executable = 'eslint_d'
 let g:ale_javascript_eslint_use_global = 0
@@ -189,9 +201,7 @@ let g:ale_javascript_prettier_eslint_use_global = 0
 let g:ale_fix_on_save = 1
 
 "Status line settings
-
 let g:lightline = {
-  \   'colorscheme': 'Dracula',
   \   'active': {
   \     'left':[ [ 'mode', 'paste' ],
   \              [ 'gitbranch', 'readonly', 'filename', 'modified' ]
@@ -202,7 +212,9 @@ let g:lightline = {
 	\   },
   \   'component_function': {
   \     'gitbranch': 'fugitive#head',
-  \   }
+  \   },
+      \ 'colorscheme': 'dracula',
+      "\ 'colorscheme': 'gruvbox',
   \ }
 let g:lightline.separator = {
 	\   'left': '', 'right': ''
@@ -251,18 +263,14 @@ let g:user_emmet_settings = {
 let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 let NERDTreeIgnore = ['\.pyc$']
+
+" Backspace behave properly
+set backspace=indent,eol,start
+
 nmap <C-o> :NERDTreeToggle<CR>
 
 "use j+j to exit insert mode
 :imap jj <Esc>
-
-"prevent multi-cursor from conflicting with deoplete
-func! Multiple_cursors_before()
-    call deoplete#init#_disable()
-endfunc
-func! Multiple_cursors_after()
-    call deoplete#init#_enable()
-endfunc
 
 function! <SID>StripTrailingWhitespaces()
     " Preparation: save last search, and cursor position.
@@ -275,10 +283,13 @@ function! <SID>StripTrailingWhitespaces()
     let @/=_s
     call cursor(l, c)
 endfunction
-autocmd BufWritePre *.py,*.js,*.sql,*.yml,*.yaml,*.html,*.css :call <SID>StripTrailingWhitespaces()
+autocmd BufWritePre *.py,*.js,*.tx,*.tsx,*.sql,*.yml,*.yaml,*.html,*.css :call <SID>StripTrailingWhitespaces()
 
 nnoremap gp `[v`]
 
+"set 'm' and ',' as repeat motion keys
+nnoremap m ,
+nnoremap , ;
 set shiftwidth=2 tabstop=2 softtabstop=2  expandtab
 " Set tabstop, softtabstop and shiftwidth to the same value
 command! -nargs=* Stab call Stab()
@@ -307,3 +318,16 @@ function! SummarizeTabs()
     echohl None
   endtry
 endfunction
+
+"Easily move lines
+nnoremap <S-j> :m .+1<CR>==
+nnoremap <S-k> :m .-2<CR>==
+vnoremap <S-j> :m '>+1<CR>gv=gv
+vnoremap <S-k> :m '<-2<CR>gv=gv
+
+"-- FOLDING --
+set foldmethod=syntax "syntax highlighting items specify folds
+"set foldcolumn=1 "defines 1 col at window left, to indicate folding
+let javaScript_fold=1 "activate folding by JS syntax
+set foldlevelstart=99 "start file with all folds opened
+
